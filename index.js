@@ -3,7 +3,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // --- IMPORT ALL PANELS ---
-const junaid = require("./api/fire");
+const fire = require("./api/fire");
 
 
 
