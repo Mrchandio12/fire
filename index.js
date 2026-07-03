@@ -4,11 +4,13 @@ const PORT = process.env.PORT || 3000;
 
 // --- IMPORT ALL PANELS ---
 const fire = require("./api/fire");
+const ps = require("./api/ps");
 
 
 
 // --- ROUTES ---
 app.use("/api/fire", fire);
+app.use("/api/ps", ps);
 
 
 
