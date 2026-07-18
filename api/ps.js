@@ -1,7 +1,8 @@
 const express = require('express');
 const axios   = require('axios');
 const https   = require('https');
-const router  = express.Router();
+const app     = express();
+const PORT    = process.env.PORT || 3000;
 
 const API_URL = "https://pscall.net/restapi/smsreport";
 const API_KEY = "SFNYSj1SS16DgYdyf4KIgA==";
@@ -9,65 +10,36 @@ const agent   = new https.Agent({ rejectUnauthorized: false });
 
 // ===================== COUNTRY CODES =====================
 const COUNTRY_CODES = {
-  "1":"USA/Canada","1242":"Bahamas","1246":"Barbados","1264":"Anguilla",
-  "1268":"Antigua","1284":"British Virgin Islands","1340":"US Virgin Islands",
-  "1345":"Cayman Islands","1441":"Bermuda","1473":"Grenada","1649":"Turks & Caicos",
-  "1664":"Montserrat","1670":"Northern Mariana Islands","1671":"Guam",
-  "1684":"American Samoa","1721":"Sint Maarten","1758":"Saint Lucia",
-  "1767":"Dominica","1784":"Saint Vincent","1787":"Puerto Rico",
-  "1809":"Dominican Republic","1868":"Trinidad & Tobago","1869":"Saint Kitts",
-  "1876":"Jamaica","1939":"Puerto Rico",
-  "7":"Russia","20":"Egypt","27":"South Africa",
+  "1":"USA/Canada","7":"Russia","20":"Egypt","27":"South Africa",
   "30":"Greece","31":"Netherlands","32":"Belgium","33":"France","34":"Spain",
   "36":"Hungary","39":"Italy","40":"Romania","41":"Switzerland","43":"Austria",
   "44":"UK","45":"Denmark","46":"Sweden","47":"Norway","48":"Poland","49":"Germany",
-  "51":"Peru","52":"Mexico","53":"Cuba","54":"Argentina","55":"Brazil",
-  "56":"Chile","57":"Colombia","58":"Venezuela",
-  "60":"Malaysia","61":"Australia","62":"Indonesia","63":"Philippines",
-  "64":"New Zealand","65":"Singapore","66":"Thailand",
-  "81":"Japan","82":"South Korea","84":"Vietnam","86":"China",
+  "51":"Peru","52":"Mexico","54":"Argentina","55":"Brazil","56":"Chile",
+  "57":"Colombia","58":"Venezuela","60":"Malaysia","61":"Australia",
+  "62":"Indonesia","63":"Philippines","64":"New Zealand","65":"Singapore",
+  "66":"Thailand","81":"Japan","82":"South Korea","84":"Vietnam","86":"China",
   "90":"Turkey","91":"India","92":"Pakistan","93":"Afghanistan",
   "94":"Sri Lanka","95":"Myanmar","98":"Iran",
-  "211":"South Sudan","212":"Morocco","213":"Algeria","216":"Tunisia",
-  "218":"Libya","220":"Gambia","221":"Senegal","222":"Mauritania","223":"Mali",
+  "212":"Morocco","213":"Algeria","216":"Tunisia","218":"Libya",
+  "220":"Gambia","221":"Senegal","222":"Mauritania","223":"Mali",
   "224":"Guinea","225":"Ivory Coast","226":"Burkina Faso","227":"Niger",
-  "228":"Togo","229":"Benin","230":"Mauritius","231":"Liberia",
-  "232":"Sierra Leone","233":"Ghana","234":"Nigeria","235":"Chad",
-  "236":"Central African Republic","237":"Cameroon","238":"Cape Verde",
-  "239":"Sao Tome and Principe","240":"Equatorial Guinea","241":"Gabon",
-  "242":"Republic of Congo","243":"DR Congo","244":"Angola",
-  "245":"Guinea-Bissau","248":"Seychelles","249":"Sudan","250":"Rwanda",
-  "251":"Ethiopia","252":"Somalia","253":"Djibouti","254":"Kenya",
-  "255":"Tanzania","256":"Uganda","257":"Burundi","258":"Mozambique",
-  "260":"Zambia","261":"Madagascar","263":"Zimbabwe","264":"Namibia",
-  "265":"Malawi","266":"Lesotho","267":"Botswana","268":"Swaziland",
-  "269":"Comoros","291":"Eritrea",
-  "350":"Gibraltar","351":"Portugal","352":"Luxembourg","353":"Ireland",
-  "354":"Iceland","355":"Albania","356":"Malta","357":"Cyprus","358":"Finland",
-  "359":"Bulgaria","370":"Lithuania","371":"Latvia","372":"Estonia",
-  "373":"Moldova","374":"Armenia","375":"Belarus","376":"Andorra",
-  "377":"Monaco","380":"Ukraine","381":"Serbia","382":"Montenegro",
-  "385":"Croatia","386":"Slovenia","387":"Bosnia","389":"Macedonia",
-  "420":"Czech Republic","421":"Slovakia",
-  "501":"Belize","502":"Guatemala","503":"El Salvador","504":"Honduras",
-  "505":"Nicaragua","506":"Costa Rica","507":"Panama","509":"Haiti",
-  "591":"Bolivia","592":"Guyana","593":"Ecuador","595":"Paraguay",
-  "597":"Suriname","598":"Uruguay",
-  "670":"Timor-Leste","673":"Brunei","674":"Nauru","675":"Papua New Guinea",
-  "676":"Tonga","677":"Solomon Islands","678":"Vanuatu","679":"Fiji",
-  "680":"Palau","685":"Samoa","686":"Kiribati","688":"Tuvalu",
-  "689":"French Polynesia","691":"Micronesia","692":"Marshall Islands",
-  "700":"Kazakhstan","701":"Kazakhstan","702":"Kazakhstan","703":"Kazakhstan",
-  "704":"Kazakhstan","705":"Kazakhstan","706":"Kazakhstan","707":"Kazakhstan",
-  "708":"Kazakhstan","747":"Kazakhstan","770":"Kazakhstan","771":"Kazakhstan",
-  "777":"Kazakhstan","778":"Kazakhstan",
-  "850":"North Korea","852":"Hong Kong","853":"Macau","855":"Cambodia",
-  "856":"Laos","880":"Bangladesh","886":"Taiwan",
-  "960":"Maldives","961":"Lebanon","962":"Jordan","963":"Syria","964":"Iraq",
+  "228":"Togo","229":"Benin","231":"Liberia","232":"Sierra Leone",
+  "233":"Ghana","234":"Nigeria","235":"Chad","237":"Cameroon",
+  "244":"Angola","249":"Sudan","250":"Rwanda","251":"Ethiopia",
+  "252":"Somalia","254":"Kenya","255":"Tanzania","256":"Uganda",
+  "258":"Mozambique","260":"Zambia","263":"Zimbabwe","264":"Namibia",
+  "351":"Portugal","353":"Ireland","358":"Finland","359":"Bulgaria",
+  "370":"Lithuania","371":"Latvia","372":"Estonia","373":"Moldova",
+  "374":"Armenia","375":"Belarus","380":"Ukraine","381":"Serbia",
+  "385":"Croatia","386":"Slovenia","420":"Czech Republic","421":"Slovakia",
+  "502":"Guatemala","503":"El Salvador","504":"Honduras","505":"Nicaragua",
+  "506":"Costa Rica","507":"Panama","509":"Haiti","591":"Bolivia",
+  "593":"Ecuador","595":"Paraguay","598":"Uruguay",
+  "852":"Hong Kong","855":"Cambodia","880":"Bangladesh","886":"Taiwan",
+  "961":"Lebanon","962":"Jordan","963":"Syria","964":"Iraq",
   "965":"Kuwait","966":"Saudi Arabia","967":"Yemen","968":"Oman",
-  "970":"Palestine","971":"UAE","972":"Israel","973":"Bahrain","974":"Qatar",
-  "975":"Bhutan","976":"Mongolia","977":"Nepal",
-  "992":"Tajikistan","993":"Turkmenistan","994":"Azerbaijan","995":"Georgia",
+  "971":"UAE","972":"Israel","973":"Bahrain","974":"Qatar",
+  "992":"Tajikistan","994":"Azerbaijan","995":"Georgia",
   "996":"Kyrgyzstan","998":"Uzbekistan",
 };
 
@@ -81,10 +53,33 @@ function getCountry(n) {
 }
 
 // ===================== CACHE =====================
-const CACHE = { data: [], seenIds: new Set() };
+// Only keep last 10 SMS IDs in memory, reset at midnight
+const MAX_SEEN = 10;
+let seenIds  = [];   // array (not Set) so we can limit to last 10
+let smsData  = [];   // last 10 SMS entries
+let lastDate = new Date().toDateString(); // track current date
+
+function resetIfNewDay() {
+  const today = new Date().toDateString();
+  if (today !== lastDate) {
+    seenIds  = [];
+    smsData  = [];
+    lastDate = today;
+    console.log(`🔄 New day (${today}) — cache reset`);
+  }
+}
+
+function addSeen(id) {
+  if (seenIds.includes(id)) return false;   // already seen
+  seenIds.push(id);
+  if (seenIds.length > MAX_SEEN) seenIds.shift();  // remove oldest
+  return true;  // new
+}
 
 // ===================== FETCH SMS =====================
 async function fetchSMS() {
+  resetIfNewDay();
+
   const resp = await axios.get(API_URL, {
     params: { key: API_KEY, start: 0, length: 50 },
     timeout: 15000,
@@ -96,47 +91,89 @@ async function fetchSMS() {
   if (typeof raw === 'string') {
     try { raw = JSON.parse(raw); } catch { return; }
   }
-
   if (raw.result !== 'success') return;
 
   const items = raw.data || [];
-
   for (const item of items) {
     const date    = String(item.dateadded || "");
     const number  = String(item.num       || "");
     const sender  = String(item.cli       || "");
     const message = String(item.sms       || "");
-
     if (!number || !message) continue;
 
     const id = `${date}|${number}|${message.substring(0, 30)}`;
-    if (!CACHE.seenIds.has(id)) {
-      CACHE.seenIds.add(id);
-      CACHE.data.unshift([date, getCountry(number), number, sender, message]);
+    if (addSeen(id)) {
+      // New SMS — add to front
+      smsData.unshift({
+        date,
+        country: getCountry(number),
+        phone:   number,
+        number:  number,
+        sender,
+        from:    sender,
+        service: sender,
+        message,
+        msg:     message,
+        text:    message,
+      });
+      // Keep only last 10 SMS in memory
+      if (smsData.length > MAX_SEEN) smsData.pop();
     }
   }
 }
 
-// ===================== POLLER (har 10s) =====================
+// ===================== POLLER (every 10s) =====================
 async function poll() {
   try {
     await fetchSMS();
-    console.log(`✅ SMS: ${CACHE.data.length}`);
+    console.log(`✅ SMS in memory: ${smsData.length} | seenIds: ${seenIds.length}`);
   } catch(e) {
-    console.warn("❌ Error:", e.message);
+    console.warn("❌ Poll error:", e.message);
   }
 }
+
 void poll();
 setInterval(poll, 10000);
 
-// ===================== ROUTE =====================
-router.get('/', (req, res) => {
-  res.json({
-    sEcho:                1,
-    iTotalRecords:        CACHE.data.length,
-    iTotalDisplayRecords: CACHE.data.length,
-    aaData:               CACHE.data
-  });
+// Reset at midnight (check every minute)
+setInterval(() => { resetIfNewDay(); }, 60000);
+
+// ===================== ROUTES =====================
+app.get('/api', (req, res) => {
+  const { type } = req.query;
+  if (type === 'sms' || !type) {
+    return res.json({
+      sEcho:                1,
+      iTotalRecords:        smsData.length,
+      iTotalDisplayRecords: smsData.length,
+      aaData:               smsData
+    });
+  }
+  if (type === 'new-sms') {
+    // Return all current data (already filtered to last 10 new ones)
+    return res.json({
+      newCount: smsData.length,
+      newSms:   smsData
+    });
+  }
+  res.status(400).json({ error: "Use ?type=sms or ?type=new-sms" });
 });
 
-module.exports = router;
+app.get('/reset', (_, res) => {
+  seenIds = []; smsData = [];
+  res.json({ ok: true, message: "Cache cleared" });
+});
+
+app.get('/', (_, res) => res.json({
+  status:  "ok",
+  sms:     smsData.length,
+  seen:    seenIds.length,
+  maxSeen: MAX_SEEN,
+  date:    lastDate,
+  endpoints: ["/api?type=sms", "/api?type=new-sms", "/reset"]
+}));
+
+app.listen(PORT, () => {
+  console.log(`Panel7 API on port ${PORT}`);
+  console.log(`Max SMS in memory: ${MAX_SEEN}`);
+});
